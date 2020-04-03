@@ -16,11 +16,10 @@ imgset3 = imageSet(imgFolder3);
 % % imshow(newimage)
 image=0;
 ic1=0;% array indexing
-for n1=1:(imgset1.Count)-38
+for n1=1:(imgset1.Count)
     ic1=ic1+1;
     ii1=read(imgset1,n1);
     sp1(ic1) ={imresize( imsharpen(ii1,'Radius',2,'Amount',1),[64,220])};
-    ssp1(ic1)={1};
     image=image+1
     i1=imrotate(ii1,90);
     ic1=ic1+1;
@@ -32,7 +31,7 @@ for n1=1:(imgset1.Count)-38
     image=image+1
 end
 ic2=0;% array indexing
-for n2=1:(imgset2.Count)-35
+for n2=1:(imgset2.Count)
     ic2=ic2+1;
     ii2=read(imgset2,n2);
     sp2(ic2) = {imresize(imsharpen(ii2,'Radius',2,'Amount',1),[64,220]),2;};
@@ -47,7 +46,7 @@ for n2=1:(imgset2.Count)-35
     image=image+1
 end
 ic3=0;% array indexing
-for n3=1:(imgset3.Count)-35
+for n3=1:(imgset3.Count)
     ic3=ic3+1;
     ii3=read(imgset3,n3);
     sp3(ic3,2) = {imresize(imsharpen(ii3,'Radius',2,'Amount',1),[64,220]),3;};
