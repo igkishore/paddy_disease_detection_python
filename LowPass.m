@@ -1,0 +1,10 @@
+clear all;clc;
+filedir = fullfile('rice_leaf_diseases','Bacterial leaf blight','DSC_0366.JPG');
+a = imread(filedir);
+J = imnoise(a,'salt & pepper',0.2);
+f = ones(size(J))/(size(J,1)*size(J,2)*size(J,3));
+af = fftshift(fft2(a));
+res = af.*f;
+fftshow(af);
+afhbi = ifft2(res);
+ifftshow(afhbi);
