@@ -21,12 +21,12 @@ imds = imageDatastore(digitDatasetPath, ...
     'IncludeSubfolders',true,'LabelSource','foldernames');
 
 % To Vies The Files
-figure;
-perm = randperm(368,20);
-for i = 1:20
-    subplot(4,5,i);
-    imshow(imds.Files{perm(i)});
-end
+% figure;
+% perm = randperm(368,20);
+% for i = 1:20
+%     subplot(4,5,i);
+%     imshow(imds.Files{perm(i)});
+% end
 
 % check the Labels
 labelCount = countEachLabel(imds)
@@ -38,48 +38,62 @@ img = readimage(imds,1);
 size(img)
 
 %  Classifing The dataset
-numTrainFiles = 92;
+numTrainFiles = 100;
 [imdsTrain,imdsValidation] = splitEachLabel(imds,numTrainFiles,'randomize');
 
 % Defining The Layers
 layers = [
     imageInputLayer([64 220 3])
     
-    convolution2dLayer(3,8,'Padding','same')
+    convolution2dLayer(4,8,'Padding',[1 1])
+    convolution2dLayer(4,8,'Padding',[1 1])
+    convolution2dLayer(4,8,'Padding',[1 1])
+    batchNormalizationLayer
+    reluLayer
+    
+    convolution2dLayer(5,16,'Padding',[2 2])
+    convolution2dLayer(5,16,'Padding',[2 2])
+    convolution2dLayer(5,16,'Padding',[2 2])
+    batchNormalizationLayer
+    reluLayer
+    
+    convolution2dLayer(5,32,'Padding',[2 2])
+    convolution2dLayer(5,32,'Padding',[1 1])
+    convolution2dLayer(5,32,'Padding',[1 1])
     batchNormalizationLayer
     reluLayer
     
     maxPooling2dLayer(2,'Stride',2)
     
-    convolution2dLayer(3,16,'Padding','same')
+    convolution2dLayer(3,64,'Padding',[1 1])
+    convolution2dLayer(3,64,'Padding',[1 1])
     batchNormalizationLayer
     reluLayer
     
     maxPooling2dLayer(2,'Stride',2)
     
-    convolution2dLayer(3,32,'Padding','same')
+    convolution2dLayer(2,128,'Padding',[1 1])
+    convolution2dLayer(2,128,'Padding',[1 1])
     batchNormalizationLayer
     reluLayer
-    
-    maxPooling2dLayer(2,'Stride',2)
-    
-    convolution2dLayer(3,64,'Padding','same')
-    batchNormalizationLayer
-    reluLayer
-    
+    crossChannelNormalizationLayer(3)
+   
     dropoutLayer
     fullyConnectedLayer(3)
     softmaxLayer
     classificationLayer];
 
 options = trainingOptions('adam', ...
-    'InitialLearnRate',4e-4, ...
+    'LearnRateSchedule','piecewise', ...
+    'LearnRateDropFactor',0.2, ...
+    'LearnRateDropPeriod',5, ...
     'SquaredGradientDecayFactor',0.999, ...
-    'MaxEpochs',20, ...
-    'MiniBatchSize',30, ...
+    'L2Regularization' ,1.0000e-05,...
+    'MaxEpochs',30, ...
+    'MiniBatchSize',25, ...
     'Shuffle','every-epoch', ...
     'ValidationData',imdsValidation, ...
-    'ValidationFrequency',4, ...
+    'ValidationFrequency',5, ...
     'Verbose',false, ...
     'Plots','training-progress');
 
